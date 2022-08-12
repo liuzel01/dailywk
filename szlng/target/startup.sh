@@ -1,6 +1,7 @@
 #!/bin/bash 
 
 # 初始化命令
+# 第一次部署需运行此命令，运行完成后，注释命令
 # java -cp app.jar -Dloader.main=org.hlframework.iot.server.HlInstallApplication org.springframework.boot.loader.PropertiesLauncher 
 
 
