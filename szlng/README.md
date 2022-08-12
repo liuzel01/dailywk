@@ -18,8 +18,8 @@ docker-compose logs -f app
 
 - target/ 下的需要跟研发确定，有无更新，如有则需要替换
 
-    /data 为初始化脚本
+    [target/data](http://172.16.2.122/devops/xm-dkcompose-devops/-/tree/main/szlng/target/data) 为初始化脚本
 
-    hilong-xxx-boot.jar 为项目后端java 包
+    target/hilong-xxx-boot.jar 为项目后端java 包
 
-    startup.sh 为容器内运行后端脚本
+    [target/startup.sh](http://172.16.2.122/devops/xm-dkcompose-devops/-/blob/main/szlng/target/startup.sh) 为容器内运行后端脚本
