@@ -1,0 +1,76 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: pg14
+    restart: always
+    privileged: true
+    ports: 
+      - "5432:5432"
+    volumes:
+      - /home/data/postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pg14
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: iot
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    ports:
+      - "20001:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@hilonggroup.com
+      PGADMIN_DEFAULT_PASSWORD: 123456
+
+  mq:
+    image: rabbitmq:3-management
+    restart: always
+    volumes:
+      - /home/data/mq_data:/var/lib/rabbitmq
+    environment:
+      - "RABBITMQ_HIPE_COMPILE=1"
+      - "RABBITMQ_DEFAULT_USER=wanfang"
+      - "RABBITMQ_DEFAULT_PASS=wanfang12345678"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  ts:
+    image: cassandra:4.0
+    container_name: cassandra4
+    restart: always
+    ports:
+      - 9042:9042
+    volumes:
+      - /home/data/cassandra:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=cassand
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: application:latest
+    container_name: app-server
+    restart: always
+    depends_on:
+      - ts
+      - mq
+      - postgres
+      - pgadmin4
+    ports:
+      - 8091:8091
+#       - 1883:1883
+    environment:
+      - "HTTP_BIND_PORT=8091"
+      - "TB_QUEUE_TYPE=rabbitmq"
+      - "TB_QUEUE_RABBIT_MQ_HOST=mq"
+      - "TB_QUEUE_RABBIT_MQ_USERNAME=wanfang"
+      - "TB_QUEUE_RABBIT_MQ_PASSWORD=wanfang12345678"
+      - "CASSANDRA_URL=ts:9042"
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/iot"
+      - "SPRING_DATASOURCE_USERNAME=pg14"
+      - "SPRING_DATASOURCE_PASSWORD=123456"
+      - "INSTALL_DATA_DIR=/data"
