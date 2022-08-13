@@ -1,0 +1,26 @@
+version: "3.1"
+services:
+  jenkins:
+    image: jenkins/jenkins:2.363-centos7
+    container_name: jenkins
+    restart: always 
+    hostname: jenkins
+    user: root
+    network_mode: host
+    ports: 
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /etc/profile.d/:/etc/profile.d/
+      - /home/jenkins_home/:/var/jenkins_home/
+      - /etc/localtime:/etc/localtime
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /etc/docker/daemon.json:/etc/docker/daemon.json 
+      - /home/devops/dl.lng/:/root/
+# 使用文件挂载，内外部不能实时同步更改
+#       - /home/devops/deploy_docker.sh:/root/deploy_docker.sh
+    environment:
+      JAVA_OPTS: "-Duser.timezone=Asia/Shanghai -Dsun.jnu.encoding=UTF-8 -Difile.encoding=utf-8"
+#       JENKINS_OPTS: "--httpPort=8090"
+    privileged: true
