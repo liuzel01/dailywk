@@ -16,7 +16,7 @@ docker-compose logs -f app
 
 - 数据挂载目录为： /home/data/xxxx  （自动创建，无需手动）
 
-- target/ 下的需要跟研发确定，有无更新，如有则需要替换
+- target/ 下的**需要跟研发确定有无更新，如有则需要替换**
 
     [target/data](http://172.16.2.122/devops/xm-dkcompose-devops/-/tree/main/szlng/target/data) 为初始化脚本
 
