@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  web:
+    image: 'gitlab/gitlab-ee:latest'
+    container_name: gitlab
+    restart: always
+    hostname: gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://172.16.2.122'
+    ports:
+      - '2222:22'
+      - '80:80'
+      - '443:443'
+#       - '5000:5000'
+    volumes:
+      - '/home/gitlab/config:/etc/gitlab:Z'
+      - '/home/gitlab/logs:/var/log/gitlab:Z'
+      - '/home/gitlab/data:/var/opt/gitlab:Z'
+    privileged: true
