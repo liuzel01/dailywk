@@ -1,3 +1,11 @@
-# xm-dkcompose-devops
+> 项目上、运维支撑组等用到的，各组件的docker-compose 配置，供参考
 
-项目上、运维支撑组等用到的，各组件的docker-compose 配置，供参考
+## devops
+
+devops 文件夹下，用于存储运维组内部署过程使用到的文件配置
+
+- 各服务部署于不同服务器上，后续可以整合在一起
+
+### gitlab
+
+gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进 重新启用的 gitlab 容器内
