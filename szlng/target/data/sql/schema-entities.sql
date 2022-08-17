@@ -58,6 +58,20 @@ CREATE TABLE IF NOT EXISTS admin_settings (
     key varchar(255)
 );
 
+CREATE TABLE IF NOT EXISTS "network_component" (
+  "id" uuid NOT NULL CONSTRAINT network_component_pkey PRIMARY KEY,
+  "name" varchar(255) ,
+  "network_type" varchar(255),
+  "profile_data" jsonb,
+  "search_text" varchar(255),
+  "customer_id" uuid,
+  "tenant_id" uuid,
+  "created_time" int8 NOT NULL,
+  "additional_info" varchar,
+  "network_status" varchar(255) ,
+  "description" varchar(255)
+);
+
 CREATE TABLE IF NOT EXISTS "opc_ua_client"(
   "id" uuid NOT NULL CONSTRAINT client_pkey PRIMARY KEY,
   "name" varchar(255) ,
