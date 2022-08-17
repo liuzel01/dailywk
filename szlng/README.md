@@ -23,3 +23,7 @@ docker-compose logs -f app
     target/hilong-xxx-boot.jar 为项目后端java 包
 
     [target/startup.sh](http://172.16.2.122/devops/xm-dkcompose-devops/-/blob/main/szlng/target/startup.sh) 为容器内运行后端脚本
+
+- data 文件获取路径，如下图所示
+
+![所属路径](https://tva1.sinaimg.cn/large/006DaNoWgy1h59vmpbfo2j31hc0pwam0.jpg "所属路径")
