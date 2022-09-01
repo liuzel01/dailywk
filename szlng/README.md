@@ -19,6 +19,7 @@ docker-compose logs -f app
     http://127.0.0.1:5432 
 
     登录账号/密码： pg14  123456
+    
     数据库名： iot
 
 - mqtt：
