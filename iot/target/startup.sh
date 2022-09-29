@@ -6,4 +6,4 @@
 
 
 # 启动后端命令
-java -jar app.jar -Dloader.main=org.hlframework.iot.server.HlServerApplication -Dspring.jpa.hibernate.ddl-auto=none org.springframework.boot.loader.PropertiesLauncher
+java -jar app.jar -Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8 -Dloader.main=org.hlframework.iot.server.HlServerApplication -Dspring.jpa.hibernate.ddl-auto=none org.springframework.boot.loader.PropertiesLauncher
