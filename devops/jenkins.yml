@@ -1,12 +1,17 @@
 version: "3.1"
 services:
   jenkins:
-    image: jenkins/jenkins:2.365-centos7
+    image: jenkins/jenkins:2.370-centos7
     container_name: jenkins
     restart: always 
     hostname: jenkins
     user: root
     network_mode: host
+    logging:
+      driver: json-file
+      options:
+        max-size: "5g"
+        max-file: "3"
     ports: 
       - "8080:8080"
       - "50000:50000"
