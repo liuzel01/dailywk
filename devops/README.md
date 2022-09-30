@@ -4,7 +4,7 @@
 
 ### gitlab
 
-gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进 重新启用的 gitlab 容器内
+gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进容器内
 
 ### jenkins
 
@@ -21,3 +21,9 @@ docker-compose -f jenkins.yml down
 docker-compose -f jenkins.yml logs -f --tail=100
 
 ## tips
+
+每次对 gitlab 服务重启后，其内部的公钥等破解文件都会被还原
+
+- 所以，需要对文件重新破解、重启复制进容器内。。
+
+- **后续解决**
