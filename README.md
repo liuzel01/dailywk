@@ -26,6 +26,18 @@ docker-compose down
 
 docker-compose logs -f --tail=100 
 
+### minio
+
+用途： 用来代理阿里云的 OSS 服务（~~云上OSS 观看文件效果不方便~~）
+
+- 启动服务
+
+cd /home/minio
+
+docker-compose up -d 
+
+- MINIO_ROOT_USER 和 MINIO_ROOT_PASSWORD一定要用阿里云的，否则代理不到
+
 ## tips
 
 - [ ] 每次对 gitlab 服务重启后，其内部的公钥等破解文件都会被还原
