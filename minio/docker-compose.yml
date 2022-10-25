@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  server:
+    image: quay.io/minio/minio
+    command: gateway s3 https://oss-cn-chengdu.aliyuncs.com --console-address ":9001" /data
+#     command: server --console-address ":9001" /data
+    environment:
+      MINIO_ROOT_USER: LTAI5tCwVGbXreTVECatmELG
+      MINIO_ROOT_PASSWORD: nLXLB8t5DqhY03o1AHzrY5eG53hH1p
+      MINIO_BROWSER_REDIRECT_URL: http://172.16.2.123:9001
+      MINIO_SERVER_URL: http://172.16.2.123:9000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    logging:
+      options:
+        max-size: "10M"
+        max-file: "10"
+      driver: json-file
+    volumes:
+      - /home/data/minio:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
