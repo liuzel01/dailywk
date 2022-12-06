@@ -2,6 +2,23 @@
 
 > 项目上、运维支撑组等用到的，各组件的docker-compose 配置，供参考
 
+---
+**<font color=red>各目录快捷跳转：</font>**
+
+- [frp](./frp/)
+
+- [gitlab](./gitlab/)
+
+- [jenkins](./jenkins/)
+
+- [minio](./minio/)
+
+- [kuboard](./kuboard/)
+
+- [lanproxy](./lanproxy/)
+
+- [nexus](./nexus/)
+
 ### gitlab
 
 gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进容器内
@@ -27,6 +44,7 @@ docker-compose down
 docker-compose logs -f --tail=100 
 
 ### minio
+
 
 用途： 用来代理阿里云的 OSS 服务（~~云上OSS 观看文件效果不方便~~）
 
