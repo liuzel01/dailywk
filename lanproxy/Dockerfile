@@ -1,19 +1,29 @@
-FROM ibm-semeru-runtimes:open-8-jre
-# author: liuzel01
+# author: frank_lin@whu.edu.cn
 
-# TODOLIST:
-# 1. 本地拉取 github 仓库较慢，可能需要将 github 仓库同步到内网环境，进行再次修改或直接打包
-# 2. 通过 Dockerfile 的方式，无须更改本地的 proxy-server 文件夹，直接与代码仓库的保持一致，打包 -> 挂载 -> 运行，很通畅
-# 3. 参考： https://github.com/frank-lam/lanproxy-nat/blob/master/docker-server/Dockerfile
+FROM ubuntu:kinetic-20220602 as git
 
-# RUN apt-get update -y \
-#     && apt-get install git -y \
-#     && git clone https://github.com/ffay/lanproxy.git
+RUN apt-get update -y \
+    && apt-get install git -y \
+    && git clone https://github.com/ffay/lanproxy.git
 
-WORKDIR /
-# 挂载本地文件夹，再次打包、运行，无意义
-ADD ./proxy-server.tar.gz /
+#编译代码
+FROM maven as mvn
 
-ENTRYPOINT ["/lanproxy-server/startup.sh"]
+WORKDIR /lanproxy
 
-CMD ["/bin/bash"]
+COPY --from=git /lanproxy ./
+
+RUN mvn compile package -pl proxy-server -am 
+
+RUN cd distribution && DIR_NAME=$(echo `ls` | awk '{print $NF}') && mv $DIR_NAME /lanproxy/lanproxy-server
+
+#编译Docker镜像
+FROM openjdk:8-jdk-alpine
+
+WORKDIR /lanproxy-server
+
+COPY --from=mvn /lanproxy/lanproxy-server ./
+
+EXPOSE 8090 4900 4993
+
+CMD ["sh", "-c", "sh bin/startup.sh && tail -f logs/server.log"]
