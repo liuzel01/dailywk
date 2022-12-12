@@ -20,8 +20,8 @@ services:
       # - LANPROXY_PASSWORD=Hlxx@0613385
     volumes:
       # - ./conf:/lanproxy-server/distribution/proxy-server-0.1/conf
-      # 需要事先下载好最新 release 的包，挂载到容器内
-      - /home/hlit/gitlab/xm-dkcompose-devops/lanproxy/proxy-server:/proxy-server
+      # 需要事先下载好最新 release 的包，挂载到容器内，当前更新-1212
+      - ./proxy-server-0.1:/proxy-server
     command:
       - /bin/bash
       - -c
