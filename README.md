@@ -66,6 +66,13 @@ gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进�
 
 - 对目录下的 docker-compose.yml 文件进行修改，或直接启动（本仓库内只有修改后的docker-compose.yml ）
 
+- 启动成功后，在 confluence -“站点管理”进行配置，
+
+    "Document Editing Service address": http://172.16.2.123/
+    
+    "Secret key (leave blank to disable)": wjjxw0pBvrOLxJUUEtNr  (这个是根据 local.json 文件中的配置获取的)
+
+
 ## tips
 
 - [ ] 每次对 gitlab 服务重启后，其内部的公钥等破解文件都会被还原
