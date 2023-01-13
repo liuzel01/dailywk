@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  frps-server:
+    hostname: frps-server
+    restart: unless-stopped
+    image: ibm-semeru-runtimes:open-8-jre
+    container_name: frps-server
+    logging:
+      driver: json-file
+      options:
+        max-size: "500m"
+    ports:
+      - 4180:4180
+      - 4900:4900
+      - 4903:4903
+      - 9001-9010:9001-9010
+    environment:
+      - /etc/localtime:/etc/localtime:ro
+      # - LANPROXY_USERNAME=admin
+      # - LANPROXY_PASSWORD=Hlxx@0613385
+    volumes:
+      - ./proxy-server-0.1:/proxy-server
+    command:
+      - /bin/bash
+      - -c
+      - |
+        /proxy-server/bin/startup.sh &
+        tail -f /proxy-server/logs/server.log
