@@ -6,8 +6,8 @@ services:
     command: gateway s3 https://oss-cn-chengdu.aliyuncs.com --console-address ":9001" /data
 #     command: server --console-address ":9001" /data
     environment:
-      MINIO_ROOT_USER: LTAI5tCwVGbXreTVECatmELG
-      MINIO_ROOT_PASSWORD: nLXLB8t5DqhY03o1AHzrY5eG53hH1p
+      MINIO_ROOT_USER: $AccessKeyID  # 阿里云获取
+      MINIO_ROOT_PASSWORD: $Secret  # 阿里云获取
       MINIO_BROWSER_REDIRECT_URL: http://172.16.2.123:9001
       MINIO_SERVER_URL: http://172.16.2.123:9000
     healthcheck:
