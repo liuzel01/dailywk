@@ -1,0 +1,32 @@
+# 启用 daemonset，部署在 node3 节点上
+daemonset:
+  enabled: true
+  # Filebeat 配置
+  filebeatConfig:
+    filebeat.yml: |
+      filebeat.inputs:
+      - type: container
+        paths:
+          - /var/log/containers/*.log
+        processors:
+        - add_kubernetes_metadata:
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
+      output:
+        kafka:
+          enabled: true # 增加kafka的输出
+          hosts: ["kafka-0.kafka-headless.elastic.svc.cluster.local:9092","kafka-1.kafka-headless.elastic.svc.cluster.local:9092","kafka-2.kafka-headless.elastic.svc.cluster.local:9092"]
+          topic: filebeat
+          max_message_bytes: 5242880
+          partition.round_robin:
+            reachable_only: true
+          keep-alive: 120
+          required_acks: 1      
+  # Pod 部署在 node2 节点上
+  nodeSelector:
+    usefulness: business
+# # 指定镜像及tag
+# image: "docker.elastic.co/beats/filebeat"
+# imageTag: "7.15.0"

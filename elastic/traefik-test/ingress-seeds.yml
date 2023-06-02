@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traefik-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  # - host: seeds-adminweb.seedslabs.io
+  #   http:
+  #     paths:
+  #     - backend:
+  #         service:
+  #           name: seeds-adminweb
+  #           port:
+  #             number: 8000
+  #       path: /
+  #       pathType: Prefix
+  - host: seeds-web.seedslabs.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: seeds-web
+            port:
+              number: 8001
+        path: /
+        pathType: Prefix

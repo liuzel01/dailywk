@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: seeds-adminweb
+  namespace: default
+spec:
+  selector:
+    app: seeds-adminweb
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seeds-adminweb
+  namespace: default
+  labels: 
+    app: seeds-adminweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seeds-adminweb
+  template:
+    metadata:
+      labels:
+        app: seeds-adminweb
+    spec:
+      containers:
+      - name: nginx
+        image: registry.cn-chengdu.aliyuncs.com/seeds-web/seeds-admin-web
+        readinessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+      # 使用 aliyuncs 的密文（Rancher 中已添加）
+      imagePullSecrets:
+        - name: aliyuncs

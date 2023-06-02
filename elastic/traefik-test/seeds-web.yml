@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: seeds-web
+  namespace: default
+spec:
+  selector:
+    app: seeds-web
+  ports:
+  - name: http
+    port: 8001
+    targetPort: 8001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seeds-web
+  namespace: default
+  labels: 
+    app: seeds-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seeds-web
+  template:
+    metadata:
+      labels:
+        app: seeds-web
+    spec:
+      containers:
+      - name: seeds-web
+        image: registry.cn-chengdu.aliyuncs.com/seeds-web/seeds-web
+        ports:
+        - containerPort: 8001
+        readinessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        livenessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+      imagePullSecrets:
+        - name: aliyuncs

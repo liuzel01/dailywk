@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kafka
+  namespace: elastic
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`kafka.seedslabs.io`)
+    kind: Rule
+    services:
+    - name: kafka
+      port: 9092

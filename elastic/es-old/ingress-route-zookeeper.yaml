@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1
+kind: IngressRoute
+metadata:
+  name: zookeeper
+  namespace: elastic
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`zookeeper`)
+    kind: Rule
+    services:
+    - name: zookeeper
+      port: 2181

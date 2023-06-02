@@ -1,0 +1,7 @@
+replicaCount: 3
+nodeSelector: {}
+  #   usefulness: devops
+service:
+  type: NodePort
+  nodePorts:
+    client: 30081

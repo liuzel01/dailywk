@@ -1,0 +1,19 @@
+extraEnvVars: 
+  - name: TZ
+    value: "Asia/Shanghai"
+# 允许任意用户连接（默认开启）
+
+allowAnonymousLogin: true
+# 关闭认证（默认关闭）
+
+auth:
+  enable: false
+# 修改副本数
+replicaCount: 1
+
+# 4. 配置持久化，按需使用
+persistence:
+  enabled: true
+  storageClass: "standard-rwo"  # storageClass
+  accessModes:
+    - ReadWriteOnce

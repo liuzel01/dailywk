@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.24.0 (HEAD)
+  # creationTimestamp: null
+  labels:
+    io.kompose.service: seeds-mysql
+  name: seeds-mysql
+  namespace: default
+spec:
+  ports:
+    - name: "3306"
+      port: 3306
+      targetPort: 3306
+  selector:
+    io.kompose.service: seeds-mysql
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.24.0 (HEAD)
+  # creationTimestamp: null
+  labels:
+    io.kompose.service: seeds-mysql
+  name: seeds-mysql
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: seeds-mysql
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.24.0 (HEAD)
+      # creationTimestamp: null
+      labels:
+        io.kompose.service: seeds-mysql
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: seeds-mysql
+        image: registry.cn-chengdu.aliyuncs.com/seeds-java/seeds-mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "Seeds123!"
+        ports:
+          - containerPort: 3306
+        # resources: {}
+        tty: true
+      imagePullSecrets:
+        - name: aliyuncs
+status: {}

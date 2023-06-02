@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: elasticsearch
+  namespace: elastic
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`elastic.seedslabs.io`)
+    kind: Rule
+    services:
+    - name: elasticsearch-client
+      port: 9200
