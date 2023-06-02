@@ -3,62 +3,25 @@
 > 项目上、运维支撑组等用到的，各组件的docker-compose 配置，供参考
 
 ---
-**<font color=red>各目录快捷跳转：</font>**
+**<font>各目录快捷跳转：</font>**
 
-- [frp](./frp/)
+- [frp](./dkcompose/frp/)
 
-- [gitlab](./gitlab/)
+- [gitlab](./dkcompose/gitlab/)
 
-- [jenkins](./jenkins/)
+- [jenkins](./dkcompose/jenkins/)
 
-- [minio](./minio/)
+- [minio](./dkcompose/minio/)
 
-- [kuboard](./kuboard/)
+- [kuboard](./dkcompose/kuboard/)
 
-- [lanproxy](./lanproxy/)
+- [lanproxy](./dkcompose/lanproxy/)
 
-- [nexus](./nexus/)
+- [nexus](./dkcompose/nexus/)
 
-- [onlyoffice](./onlyoffice/)
+- [onlyoffice](./dkcompose/onlyoffice/)
 
-### gitlab
-
-gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进容器内
-
-### jenkins
-
-- 启动服务
-
-    ~~docker-compose -f jenkins.yml up -d~~
-
-    `docker-compose up -d `
-
-- 停止服务
-
-    ~~docker-compose -f jenkins.yml down~~
-
-    `docker-compose down `
-
-- 跟踪日志
-
-    ~~docker-compose -f jenkins.yml logs -f --tail=100~~
-
-    `docker-compose logs -f --tail=100 `
-
-### minio
-
-
-用途： 用来代理阿里云的 OSS 服务（~~云上OSS 观看文件效果不方便~~）
-
-- 启动服务
-
-    `cd /home/minio`
-
-    `docker-compose up -d `
-
-- MINIO_ROOT_USER 和 MINIO_ROOT_PASSWORD一定要用阿里云的，否则代理不到
-
-### onlyoffice 
+### onlyoffice
 
 - onlyoffice 主要是配合 confluence，实现在线预览、编辑文档
 
@@ -68,15 +31,6 @@ gitlab 除配置文件外，还需将提前破解好的公钥等文件复制进�
 
 - 启动成功后，在 confluence -“站点管理”进行配置，
 
-    "Document Editing Service address": http://172.16.2.123/
-    
+    "Document Editing Service address": <http://172.16.2.123/>
+
     "Secret key (leave blank to disable)": wjjxw0pBvrOLxJUUEtNr  (这个是根据 local.json 文件中的配置获取的)
-
-
-## tips
-
-- [ ] 每次对 gitlab 服务重启后，其内部的公钥等破解文件都会被还原
-
-- 所以，需要对文件重新破解、重启复制进容器内。。
-
-- **后续解决**
