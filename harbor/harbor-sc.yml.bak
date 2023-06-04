@@ -1,0 +1,116 @@
+# GKE 上不支持创建 PVC 吗？
+# 在 GKE 的节点上，无法通过 kubectl 连接管理 k8s 集群？
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nfs-client-provisioner
+  # replace with namespace where provisioner is deployed
+  namespace: harbor        #根据实际环境设定namespace,下面类同
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-client-provisioner-runner
+  namespace: harbor
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: run-nfs-client-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    namespace: harbor
+    # replace with namespace where provisioner is deployed
+roleRef:
+  kind: ClusterRole
+  name: nfs-client-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-nfs-client-provisioner
+  namespace: harbor
+    # replace with namespace where provisioner is deployed
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-nfs-client-provisioner
+  namespace: harbor
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    # replace with namespace where provisioner is deployed
+    namespace: harbor
+roleRef:
+  kind: Role
+  name: leader-locking-nfs-client-provisioner
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-client-provisioner
+  namespace: harbor
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner
+      containers:
+        - name: nfs-client-provisioner
+          image: quay.io/external_storage/nfs-client-provisioner
+          volumeMounts:
+            - name: nfs-client-root
+              # mountPath: /persistentvolumes #容器内挂载点
+              mountPath: /mnt/nfs #容器内挂载点
+          env:
+            - name: PROVISIONER_NAME
+              value: fuseim.pri/ifs
+            - name: NFS_SERVER
+              value: 10.146.0.8
+            - name: NFS_PATH
+              value: /opt/nfsdata
+      volumes:
+        - name: nfs-client-root #宿主机挂载点
+          nfs:
+            # server: 192.168.0.113
+            server: 10.146.0.8
+            path: /opt/nfsdata
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: harbor-nfs-storage
+  namespace: harbor
+provisioner: fuseim.pri/ifs  # or choose another name, must match deployment's env PROVISIONER_NAME'
+reclaimPolicy: Retain        #回收策略：Retain（保留）、 Recycle（回收）或者Delete（删除）
+volumeBindingMode: Immediate    #volumeBindingMode存储卷绑定策略
+allowVolumeExpansion: true    #pvc是否允许扩容
