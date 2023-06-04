@@ -1,3 +1,5 @@
 email.sh
 elastic/.vscode/*
 *.sql
+.DS_Store
+.vscode/
