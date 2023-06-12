@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: registry.cn-chengdu.aliyuncs.com/seeds-web/seeds-admin-web
+        image: harbor.seedslabs.io/seeds-web/seeds-admin-web
         readinessProbe:
           tcpSocket:
             port: 8000
@@ -47,6 +47,6 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
-      # 使用 aliyuncs 的密文（Rancher 中已添加）
+      # 使用 harbor 的密文（Rancher 中已添加）
       imagePullSecrets:
-        - name: aliyuncs
+        - name: harbor-uat

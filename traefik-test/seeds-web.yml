@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: seeds-web
-        image: registry.cn-chengdu.aliyuncs.com/seeds-web/seeds-web
+        image: harbor.seedslabs.io/seeds-web/seeds-web
         ports:
         - containerPort: 8001
         readinessProbe:
@@ -47,7 +47,7 @@ spec:
           timeoutSeconds: 30
         resources:
           limits:
-            memory: "512Mi"
+            memory: "250Mi"
             cpu: "250m"
       imagePullSecrets:
-        - name: aliyuncs
+        - name: harbor-uat
