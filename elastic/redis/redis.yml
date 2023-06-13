@@ -8,7 +8,7 @@ metadata:
   labels:
     io.kompose.service: redis
   name: redis
-  namespace: default
+  namespace: seeds-uat 
 spec:
   ports:
     - name: "6379"
@@ -29,7 +29,7 @@ metadata:
   labels:
     io.kompose.service: redis
   name: redis
-  namespace: default
+  namespace: seeds-uat
 spec:
   replicas: 1
   selector:
@@ -48,7 +48,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: redis
-        image: redis:latest
+        image: harbor.seedslabs.io/seeds-db/redis:latest
         ports:
           - containerPort: 6379
         tty: true

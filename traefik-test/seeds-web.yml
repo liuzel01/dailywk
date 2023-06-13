@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: seeds-web
-  namespace: default
+  namespace: seeds-uat 
 spec:
   selector:
     app: seeds-web
@@ -15,7 +15,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: seeds-web
-  namespace: default
+  namespace: seeds-uat 
   labels: 
     app: seeds-web
 spec:
