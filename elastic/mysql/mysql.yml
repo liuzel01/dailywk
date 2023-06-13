@@ -1,61 +1,72 @@
+# mysql-deployment-status-scale
+#设置持久卷
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  # namespace: default 
+  labels:
+    app: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi #持久卷的容量是 20 GB
+---
+#对外服务
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.24.0 (HEAD)
-  # creationTimestamp: null
+  name: mysql-service
   labels:
-    io.kompose.service: seeds-mysql
-  name: seeds-mysql
-  namespace: default
+    app: mysql
 spec:
-  ports:
-    - name: "3306"
-      port: 3306
-      targetPort: 3306
+  type: NodePort
   selector:
-    io.kompose.service: seeds-mysql
-status:
-  loadBalancer: {}
+      app: mysql
+  ports:
+  - protocol : TCP
+    nodePort: 30306
+    port: 3306
+    targetPort: 3306
 ---
+#有状态服务
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.24.0 (HEAD)
-  # creationTimestamp: null
-  labels:
-    io.kompose.service: seeds-mysql
-  name: seeds-mysql
-  namespace: default
+  name: mysql-deployment
 spec:
-  replicas: 1
+  replicas: 3
+  serviceName: mysql
   selector:
     matchLabels:
-      io.kompose.service: seeds-mysql
-  strategy: {}
+      app: mysql
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.24.0 (HEAD)
-      # creationTimestamp: null
       labels:
-        io.kompose.service: seeds-mysql
+        app: mysql
     spec:
-      restartPolicy: Always
       containers:
-      - name: seeds-mysql
-        image: registry.cn-chengdu.aliyuncs.com/seeds-java/seeds-mysql
+      - name: mysql
+        image: harbor.seedslabs.io/seeds-db/mysql8:latest 
+        imagePullPolicy: Always
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "Seeds123!"
-        ports:
-          - containerPort: 3306
-        # resources: {}
-        tty: true
-      imagePullSecrets:
-        - name: aliyuncs
-status: {}
+          value: Seeds123! 
+        # args: ["--default-authentication-plugin=mysql_native_password"]
+        resources:
+          requests:
+            cpu: "50m"
+            memory: 1Gi
+          limits:
+            cpu: "50m"
+            memory: 1Gi
+        volumeMounts:
+        - name: mysql-store
+          mountPath: /home/storageVolume/mysql  # MySQL容器的数据默认都是存在这个目录
+          subPath: mysqldata                    # 这里通过subPath挂载到子目录，就可以避免出错
+      volumes:
+      - name: mysql-store
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim             #存储卷名称使用上一步创建的持久卷名称
