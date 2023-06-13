@@ -9,6 +9,8 @@ RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &&
     chmod -R 777 /var/log/
 
 COPY ./01_schema.sql /docker-entrypoint-initdb.d
-COPY ./seeds-admin.sql /docker-entrypoint-initdb.d
-COPY ./seeds-uc.sql /docker-entrypoint-initdb.d
+COPY ./seeds_admin.sql /docker-entrypoint-initdb.d
+COPY ./seeds_uc.sql /docker-entrypoint-initdb.d
+COPY ./seeds_account.sql /docker-entrypoint-initdb.d
+COPY ./seeds_wallet.sql /docker-entrypoint-initdb.d
 COPY ./my.cnf /etc/my.cnf
