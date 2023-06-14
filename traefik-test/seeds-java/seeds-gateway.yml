@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seeds-gateway
+  namespace: seeds-uat 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seeds-gateway
+  template:
+    metadata:
+      labels:
+        app: seeds-gateway
+        # 不同的应用程序层级
+        # frontend/backend/database
+        tier: backend
+    spec:
+      containers:
+      - name: seeds-gateway
+        image: harbor.seedslabs.io/seeds-java/seeds-gateway:latest
+        imagePullPolicy: Always
+        env:
+        # - name: PROFILE
+        #   value: prd
+        - name: APP_name
+          value: seeds-gateway
+        # - name: BUILD_NUMBER
+        #   value: BN_88
+        ports:
+          - containerPort: 8888
+        readinessProbe:
+          tcpSocket:
+            port: 8888
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        livenessProbe:
+          tcpSocket:
+            port: 8888
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        resources:
+          # requests:
+          #   memory: "512Mi"
+          #   cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+      imagePullSecrets:
+        - name: harbor-uat

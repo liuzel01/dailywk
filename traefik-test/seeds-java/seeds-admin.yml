@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seeds-admin
+  namespace: seeds-uat 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seeds-admin
+  template:
+    metadata:
+      labels:
+        app: seeds-admin
+        # 不同的应用程序层级
+        # frontend/backend/database
+        tier: backend
+    spec:
+      containers:
+      - name: seeds-admin
+        image: harbor.seedslabs.io/seeds-java/seeds-admin:latest
+        imagePullPolicy: Always
+        env:
+        # - name: PROFILE
+        #   value: prd
+        - name: app_name
+          value: seeds-admin
+        # - name: BUILD_NUMBER
+        #   value: BN_88
+        ports:
+          - containerPort: 10102
+        readinessProbe:
+          tcpSocket:
+            port: 10102
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        livenessProbe:
+          tcpSocket:
+            port: 10102
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 30
+        resources: {}
+          # requests:
+          #   memory: "512Mi"
+          #   cpu: "500m"
+          # limits:
+          #   # memory: "512Mi"
+          #   memory: 1Gi
+          #   cpu: 1
+      imagePullSecrets:
+        - name: harbor-uat
