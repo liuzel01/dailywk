@@ -8,16 +8,16 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  # - host: seeds-adminweb.seedslabs.io
-  #   http:
-  #     paths:
-  #     - backend:
-  #         service:
-  #           name: seeds-adminweb
-  #           port:
-  #             number: 8000
-  #       path: /
-  #       pathType: Prefix
+  - host: seeds-adminweb.seedslabs.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: seeds-adminweb
+            port:
+              number: 8000
+        path: /
+        pathType: Prefix
   - host: seeds-web.seedslabs.io
     http:
       paths:
