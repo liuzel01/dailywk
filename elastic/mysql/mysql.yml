@@ -1,19 +1,19 @@
-# mysql-deployment-status-scale
-#设置持久卷
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pv-claim
-  # namespace: default 
-  labels:
-    app: mysql
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi #持久卷的容量是 20 GB
----
+# # mysql-deployment-status-scale
+# #设置持久卷
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: mysql-pv-claim
+#   # namespace: default 
+#   labels:
+#     app: mysql
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 20Gi
+# ---
 #对外服务
 apiVersion: v1
 kind: Service
@@ -27,7 +27,7 @@ spec:
       app: mysql
   ports:
   - protocol : TCP
-    nodePort: 30306
+    # nodePort: 30306
     port: 3306
     targetPort: 3306
 ---
@@ -66,7 +66,19 @@ spec:
         - name: mysql-store
           mountPath: /home/storageVolume/mysql  # MySQL容器的数据默认都是存在这个目录
           subPath: mysqldata                    # 这里通过subPath挂载到子目录，就可以避免出错
-      volumes:
-      - name: mysql-store
-        persistentVolumeClaim:
-          claimName: mysql-pv-claim             #存储卷名称使用上一步创建的持久卷名称
+      imagePullSecrets:
+        - name: harbor-uat
+  volumeClaimTemplates:
+  - metadata: 
+      name: mysql-store
+    spec: 
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "standard-rwo"
+      resources: 
+        requests:
+          storage: 20Gi
+
+      # volumes:
+      # - name: mysql-store
+      #   persistentVolumeClaim:
+      #     claimName: mysql-pv-claim             #存储卷名称使用上一步创建的持久卷名称
