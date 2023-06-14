@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seeds-admin
+  namespace: seedsprd
+spec:
+  replicas: 1
+  selector:
+   matchLabels:
+     app: seeds-admin
+  template:
+    metadata:
+      labels:
+        app: seeds-admin
+        tier: backend
+    spec:
+      containers:
+        - name: seeds-admin
+          image: public.ecr.aws/b3e3c7x9/seeds-admin:seeds-admin_main_202303090539
+          imagePullPolicy: Always
+          env:
+          - name: PROFILE
+            value: prd
+          - name: APP_name
+            value: seeds-admin
+          - name: BUILD_NUMBER
+            value: BN_88
+          - name: APP_name
+            value: seeds-admin
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 30
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 30
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "4096Mi"
+              cpu: "1000m"
+              #imagePullSecrets:
+              #- name: registry-harbor
