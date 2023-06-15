@@ -15,7 +15,7 @@ roles:
 # imageTag: "7.15.0"
 
 # 硬件资源有限，所有角色的节点都只开启1个
-replicas: 2
+replicas: 1
 
 # Pod 部署在 node2 节点上
 nodeSelector:
