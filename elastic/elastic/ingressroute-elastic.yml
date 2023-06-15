@@ -12,3 +12,51 @@ spec:
     services:
     - name: elasticsearch-client
       port: 9200
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kafka
+  namespace: elastic
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`kafka.seedslabs.io`)
+    kind: Rule
+    services:
+    - name: kafka
+      port: 9092
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kibana
+  namespace: elastic
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`kibana.seedslabs.io`)
+    kind: Rule
+    services:
+    - name: kibana-kibana
+      port: 5601
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: zookeeper
+  namespace: elastic
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`zookeeper.seedslabs.io`)
+    kind: Rule
+    services:
+    - name: zookeeper
+      port: 2181
