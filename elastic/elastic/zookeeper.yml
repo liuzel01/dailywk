@@ -10,7 +10,10 @@ auth:
   enable: false
 # 修改副本数
 replicaCount: 1
-
+service: 
+  type: NodePort
+  NodePort:
+    client: 2181
 # 4. 配置持久化，按需使用
 persistence:
   enabled: true

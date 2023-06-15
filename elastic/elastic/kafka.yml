@@ -3,7 +3,8 @@ extraEnvVars:
   - name: TZ
     value: "Asia/Shanghai"
 # 副本数
-replicaCount: 3
+# replicaCount: 3
+replicaCount: 1
 # 持久化存储
 persistence:
   enabled: true
@@ -11,9 +12,13 @@ persistence:
   accessModes:
     - ReadWriteOnce
   size: 8Gi
-
+service: 
+  type: NodePort
+  NodePort:
+    client: 9092
 # 配置zookeeper外部连接
 kraft: 
+# zookeeper:  
   enabled: false
 
 # zookeeper:
@@ -21,7 +26,16 @@ kraft:
 
 externalZookeeper:
   # servers: kafka-zookeeper
-  servers: zookeeper.elastic.svc.cluster.local
+  servers: ["zookeeper.elastic.svc.cluster.local:2181"]
+# externalAccess:
+#   enabled: true
+#   service:
+#     type: NodePort
+#     nodePorts: {}
+#       # - 19090
+#       # - 19091
+#       # - 19092
+#     useHostIPs: true
 
 ## 允许删除topic（按需开启）
 deleteTopicEnable: true
