@@ -1,3 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # name: service-redis
+  name: seeds-config
+  namespace: seeds-uat
+spec:
+  ports:
+    - port: 8888
+      targetPort: 8888
+      protocol: TCP
+  selector:
+    app: seeds-config
+  # type: NodePort
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,15 +36,16 @@ spec:
       - name: seeds-config
         image: harbor.seedslabs.io/seeds-java/seeds-config:latest
         imagePullPolicy: Always
+        ports:
+          - containerPort: 8888
         env:
         # - name: PROFILE
         #   value: prd
-        - name: APP_name
-          value: seeds-config
         # - name: BUILD_NUMBER
         #   value: BN_88
-        ports:
-          - containerPort: 8888
+        - name: APP_NAME
+          value: seeds-config
+          
         readinessProbe:
           tcpSocket:
             port: 8888
