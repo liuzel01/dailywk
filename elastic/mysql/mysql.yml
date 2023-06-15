@@ -70,8 +70,9 @@ spec:
           tcpSocket:
             port: 3306
           initialDelaySeconds: 60
-          periodSeconds: 60
-          timeoutSeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
         # readinessProbe:
         #   tcpSocket:
         #     port: 3306
