@@ -1,32 +1,32 @@
-# 在extraEnvVars下添加时区
 extraEnvVars: 
   - name: TZ
     value: "Asia/Shanghai"
-# 副本数
-# replicaCount: 3
 replicaCount: 1
-# 持久化存储
+
 persistence:
   enabled: true
   storageClass: "standard-rwo"
   accessModes:
     - ReadWriteOnce
   size: 8Gi
-service: 
-  type: NodePort
-  NodePort:
-    client: 9092
+  
+# service: 
+#   type: NodePort
+#   NodePort:
+#     client: 9092
+    # kafka-log 
+    # client: 9192
+
 # 配置zookeeper外部连接
 kraft: 
 # zookeeper:  
   enabled: false
 
-# zookeeper:
-#   enabled: true
-
 externalZookeeper:
-  # servers: kafka-zookeeper
-  servers: ["zookeeper.elastic.svc.cluster.local:2181"]
+  servers: ["zookeeper-log.elastic.svc.cluster.local:2181"]
+  # zookeeper-log 
+  # servers: ["zookeeper.elastic.svc.cluster.local:2281"]
+
 # externalAccess:
 #   enabled: true
 #   service:
@@ -37,17 +37,11 @@ externalZookeeper:
 #       # - 19092
 #     useHostIPs: true
 
-## 允许删除topic（按需开启）
+
 deleteTopicEnable: true
-## 日志保留时间（默认一周）
 logRetentionHours: 168
-## 自动创建topic时的默认副本数
 defaultReplicationFactor: 2
-## 用于配置offset记录的topic的partition的副本个数
 offsetsTopicReplicationFactor: 2
-## 事务主题的复制因子
 transactionStateLogReplicationFactor: 2
-## min.insync.replicas
 transactionStateLogMinIsr: 2
-## 新建Topic时默认的分区数
 numPartitions: 3

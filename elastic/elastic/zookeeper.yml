@@ -8,13 +8,14 @@ allowAnonymousLogin: true
 
 auth:
   enable: false
-# 修改副本数
+
 replicaCount: 1
-service: 
-  type: NodePort
-  NodePort:
-    client: 2181
-# 4. 配置持久化，按需使用
+# 配置不生效，不需配置
+# service: 
+#   type: NodePort
+#   NodePort:
+#     client: 2181
+
 persistence:
   enabled: true
   storageClass: "standard-rwo"  # storageClass
