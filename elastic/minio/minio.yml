@@ -1,0 +1,135 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-home
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce  #连接权限
+     # 三种连接权限 1. ReadWriteOnce :单节点可读写  2.ReadOnlyMany 多节点只读 3. ReadWriteMany 多节点可读写
+  persistentVolumeReclaimPolicy: Recycle  #数据回收策略
+     # 两种策略 1. Recycle 可回收循环使用 2. Retain 保留的，当删掉PV或者PVC数据会被保留。
+  storageClassName: nfs-home #定义当前存储的名字
+  nfs: # 用的什么协议，如果是fsdtdfs,就不能写nfs
+    path: /home/nfs
+    server: 127.0.0.1  # nfs服务器地址
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim #创建PVC
+metadata:
+  name: pv-pvc-home-nfs
+  namespace: test
+spec:
+  accessModes:
+    - ReadWriteOnce # 权限
+  resources: # 资源
+    requests:
+      storage: 50Gi
+  storageClassName: nfs-home #请求PV 资源，这里是PV的名字
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # This name uniquely identifies the Deployment
+  name: minio
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: minio # has to match .spec.template.metadata.labels
+  strategy:
+    # Specifies the strategy used to replace old Pods by new ones
+    # Refer: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        # This label is used as a selector in Service definition
+        app: minio
+    spec:
+      # Volumes used by this deployment
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pv-pvc-home-nfs
+      containers:
+      - name: minio
+        image: minio/minio
+        volumeMounts:
+        - name: data 
+          mountPath: /data
+        args:
+        - server
+        - --console-address
+        - :9001
+        - /data
+        env:
+        # MinIO access key and secret key
+        - name: MINIO_ROOT_USER
+          value: "minio"
+        - name: MINIO_ROOT_PASSWORD
+          value: "minio123"
+        ports:
+        - containerPort: 9000
+        - containerPort: 9001
+        resources: {}
+        # Readiness probe detects situations when MinIO server instance
+        # is not ready to accept traffic. Kubernetes doesn't forward
+        # traffic to the pod while readiness checks fail.
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+        # Liveness probe detects situations where MinIO server instance
+        # is not working properly and needs restart. Kubernetes automatically
+        # restarts the pods if liveness checks fail.
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio-service
+  namespace: test
+  labels:
+    app: minio-service
+  annotations:
+    kubesphere.io/creator: admin
+spec:
+  ports:
+    - name: http-9000
+      protocol: TCP
+      port: 32010
+      targetPort: 9000
+      nodePort: 32011
+    - name: http-9001
+      protocol: TCP
+      port: 32011
+      targetPort: 9001
+      nodePort: 32010
+  selector:
+    app: minio
+  clusterIP: 10.233.17.239
+  clusterIPs:
+    - 10.233.17.239
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+  
+---
