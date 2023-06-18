@@ -9,7 +9,7 @@ allowAnonymousLogin: true
 auth:
   enable: false
 
-replicaCount: 1
+replicaCount: 3
 # 配置不生效，不需配置
 # service: 
 #   type: NodePort

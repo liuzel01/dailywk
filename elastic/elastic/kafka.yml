@@ -1,7 +1,7 @@
 extraEnvVars: 
   - name: TZ
     value: "Asia/Shanghai"
-replicaCount: 1
+replicaCount: 3
 
 persistence:
   enabled: true
@@ -14,8 +14,6 @@ persistence:
 #   type: NodePort
 #   NodePort:
 #     client: 9092
-    # kafka-log 
-    # client: 9192
 
 # 配置zookeeper外部连接
 kraft: 
@@ -23,18 +21,18 @@ kraft:
   enabled: false
 
 externalZookeeper:
-  servers: ["zookeeper-log.elastic.svc.cluster.local:2181"]
-  # zookeeper-log 
-  # servers: ["zookeeper.elastic.svc.cluster.local:2281"]
+  servers: ["zookeeper.elastic.svc.cluster.local:2181"]
+  # # zookeeper-log 
+  # servers: ["zookeeper-log.elastic.svc.cluster.local:2181"]
 
 # externalAccess:
 #   enabled: true
 #   service:
 #     type: NodePort
-#     nodePorts: {}
-#       # - 19090
-#       # - 19091
-#       # - 19092
+#     nodePorts: 
+#       - 19090
+#       - 19091
+#       - 19092
 #     useHostIPs: true
 
 
