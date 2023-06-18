@@ -47,6 +47,13 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
+        volumeMounts:
+        - name: nginx-config 
+          mountPath: /etc/nginx/nginx.conf 
+      volumes:
+      - name: nginx-config 
+        configmap:
+          name: nginx-config
       # 使用 harbor 的密文（Rancher 中已添加）
       imagePullSecrets:
         - name: harbor-uat
