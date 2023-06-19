@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui-log
+spec:
+  selector:
+    app: kafka-ui-log
+  ports:
+  - port: 8080
+    targetPort: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui-log
+spec:
+  selector:
+    matchLabels:
+      app: kafka-ui-log
+  template:
+    metadata:
+      labels:
+        app: kafka-ui-log
+    spec:
+      containers:
+      - name: kafka-ui-log
+        image: provectuslabs/kafka-ui:latest
+        env: 
+        - name: KAFKA_CLUSTERS_0_NAME
+          value: kafka-log
+        - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+          value: kafka-log:9092
+        - name: KAFKA_CLUSTERS_0_ZOOKEEPER
+          value: zookeeper-log:2181
+        resources: {}
+          # limits:
+          #   memory: "128Mi"
+          #   cpu: "500m"
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kafka-ui-log
+  labels:
+    name: kafka-ui-log
+spec:
+  rules:
+  - host: kafka-ui-log.seedslabs.io
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: kafka-ui-log
+            port: 
+              number: 8080
