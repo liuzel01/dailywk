@@ -21,9 +21,9 @@ kraft:
   enabled: false
 
 externalZookeeper:
-  servers: ["zookeeper.elastic.svc.cluster.local:2181"]
-  # # zookeeper-log 
-  # servers: ["zookeeper-log.elastic.svc.cluster.local:2181"]
+  # servers: ["zookeeper:2181"]
+  # zookeeper-log 
+  servers: ["zookeeper-log:2181"]
 
 # externalAccess:
 #   enabled: true
