@@ -59,8 +59,8 @@ spec:
           value: kafka-log.elastic.svc.cluster.local:9092
         # configure of application.yml 
         # kafka 
-        - name: KAFKA_BOOTSTRAP_SERVERS 
-          value: kafka.elastic.svc.cluster.local:9092 
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: kafka.elastic.svc.cluster.local:9092
         - name: ZOOKEEPER_ADDRESS
           value: zookeeper.elastic.svc.cluster.local:2181
         # redis 
