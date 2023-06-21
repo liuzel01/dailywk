@@ -5,6 +5,7 @@ metadata:
   namespace: seeds-uat 
   annotations:
     kubernetes.io/ingress.class: traefik
+    # 默认 true
     # nginx.ingress.kubernetes.io/ssl-redirect: "false"
     cert-manager.io/issuer: letsencrypt-prod
 spec:
@@ -20,6 +21,6 @@ spec:
           service:
             name: seeds-adminweb
             port:
-              number: 8000
+              number: 80
         path: /
         pathType: Prefix
