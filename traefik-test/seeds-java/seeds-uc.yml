@@ -1,3 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # name: service-redis
+  name: seeds-uc
+  namespace: seeds-uat
+spec:
+  ports:
+    - port: 10101
+      targetPort: 10101
+      protocol: TCP
+  selector:
+    app: seeds-uc
+  # type: NodePort
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -67,7 +83,7 @@ spec:
         - name: URL_GATEWAY
           value: http://seeds-gateway:9999
         ports:
-          - containerPort: 8888
+          - containerPort: 10101
         # readinessProbe:
         #   tcpSocket:
         #     port: 8888
