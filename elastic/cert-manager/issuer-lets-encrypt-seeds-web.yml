@@ -1,15 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: letsencrypt-staging
+  name: letsencrypt-seeds-web
   namespace: seeds-uat
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     email: liuzelin01@gmail.com
     privateKeySecretRef:
-      name: letsencrypt-staging
+      name: letsencrypt-seeds-web
     solvers:
     - http01:
         ingress:
-          name: traefik-ingress
+          name: seeds-web-ingress 
