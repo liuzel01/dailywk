@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+  namespace: seeds-uat
+spec:
+  acme:
+    # 注意这里要用 production 环境的
+    server: https://acme-v02.api.letsencrypt.org/directory 
+    email: liuzelin01@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          name: seeds-web-ingress 
+    - http01:
+        ingress: 
+          name: seeds-adminweb-ingress
+  
