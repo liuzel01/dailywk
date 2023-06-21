@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config  
+data:
+  nginx.conf: |-
+    worker_processes  1;
+    events {
+        worker_connections  1024;
+    }
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-Frame-Options deny;
+        add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: *.seedslabs.io: blob:; media-src 'self'; frame-src 'none'; font-src 'self';";
+    
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        server_tokens off;
+        sendfile        on;
+        client_max_body_size 5120m;
+        include /etc/nginx/conf.d/*.conf;
+        gzip  on;
+        gzip_min_length 1k;
+        gzip_buffers 4 16k;
+        gzip_comp_level 5;
+        gzip_types text/plain application/javascript application/x-javascript text/javascript text/xml text/css;
+        #配置禁用gzip条件，支持正则。此处表示ie6及以下不启用gzip（因为ie低版本不支持）
+        gzip_disable "MSIE [1-6]\.";
+        gzip_vary on;
+        server {
+                listen       8000;
+                location / {
+                    root  /seeds/web/seeds-admin-web;
+                    index index.html index.htm;
+                    try_files $uri  /index.html;
+                }
+            client_max_body_size 5120m;
+            location ~^/admin/(.*) {
+                proxy_redirect off;
+                proxy_set_header Host $host:$server_port; #添加:$server_port
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://seeds-gateway:9999/admin/$1?$args;
+                proxy_hide_header X-Powered-By;
+                proxy_hide_header Server;
+            }
+            location ~^/uc/(.*) {
+                proxy_redirect off;
+                proxy_set_header Host $host:$server_port; #添加:$server_port
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://seeds-gateway:9999/uc/$1;
+                proxy_hide_header X-Powered-By;
+                proxy_hide_header Server;
+            }
+            error_page 404 /404.html;
+            keepalive_timeout 10;
+        }
+    }
