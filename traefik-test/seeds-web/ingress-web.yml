@@ -1,23 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: traefik-ingress
+  name: seeds-web-ingress
   namespace: seeds-uat 
   annotations:
     kubernetes.io/ingress.class: traefik
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/issuer: letsencrypt-seeds-web
 spec:
+  tls: 
+  - secretName: seeds-web-ssl
+    hosts:
+    - seeds-web.seedslabs.io
   rules:
-  - host: seeds-adminweb.seedslabs.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: seeds-adminweb
-            port:
-              number: 8000
-        path: /
-        pathType: Prefix
   - host: seeds-web.seedslabs.io
     http:
       paths:
