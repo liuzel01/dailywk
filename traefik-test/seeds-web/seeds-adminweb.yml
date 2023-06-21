@@ -8,8 +8,8 @@ spec:
     app: seeds-adminweb
   ports:
   - name: http
-    port: 8000
-    targetPort: 8000
+    port: 80
+    targetPort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -33,13 +33,15 @@ spec:
         image: harbor.seedslabs.io/seeds-web/seeds-admin-web
         readinessProbe:
           tcpSocket:
-            port: 8000
+            port: 80
+            # port: 8000
           initialDelaySeconds: 60
           periodSeconds: 60
           timeoutSeconds: 30
         livenessProbe:
           tcpSocket:
-            port: 8000
+            port: 80
+            # port: 8000
           initialDelaySeconds: 60
           periodSeconds: 60
           timeoutSeconds: 30
