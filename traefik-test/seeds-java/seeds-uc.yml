@@ -39,7 +39,7 @@ spec:
         env:
         # - name: PROFILE
         #   value: prd
-        - name: APP_name
+        - name: APP_NAME
           value: seeds-uc
         # configure of seeds-uc.yml 
         - name: DATASOURCE_URL

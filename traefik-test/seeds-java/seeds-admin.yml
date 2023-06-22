@@ -36,12 +36,14 @@ spec:
       - name: seeds-admin
         image: harbor.seedslabs.io/seeds-java/seeds-admin:latest
         imagePullPolicy: Always
+        ports:
+          - containerPort: 10102
         env:
         # - name: PROFILE
         #   value: prd
         # - name: BUILD_NUMBER
         #   value: BN_88
-        - name: app_name
+        - name: APP_NAME
           value: seeds-admin
         # - name: SERVER_PORT
         #   value: "8888"
@@ -87,8 +89,6 @@ spec:
         - name: URL_GATEWAY
           value: http://seeds-gateway:9999
         
-        ports:
-          - containerPort: 10102
         # readinessProbe:
         #   tcpSocket:
         #     port: 10102

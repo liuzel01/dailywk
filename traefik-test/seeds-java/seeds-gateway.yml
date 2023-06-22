@@ -28,18 +28,18 @@ spec:
     metadata:
       labels:
         app: seeds-gateway
-        # 不同的应用程序层级
-        # frontend/backend/database
         tier: backend
     spec:
       containers:
       - name: seeds-gateway
         image: harbor.seedslabs.io/seeds-java/seeds-gateway:latest
         imagePullPolicy: Always
+        ports:
+          - containerPort: 9999
         env:
         # - name: PROFILE
         #   value: prd
-        - name: app_name
+        - name: APP_NAME
           value: seeds-gateway
         # configure of seeds-gateway 
         # configure of bootstrap.yml 
@@ -76,8 +76,6 @@ spec:
           value: http://seeds-game:10106
         - name: URL_GATEWAY
           value: http://seeds-gateway:9999
-        ports:
-          - containerPort: 9999
         # readinessProbe:
         #   tcpSocket:
         #     port: 9999
