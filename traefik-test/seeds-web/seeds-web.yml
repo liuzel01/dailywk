@@ -49,5 +49,13 @@ spec:
           limits:
             memory: "250Mi"
             cpu: "250m"
+      #   volumeMounts:
+      #   - name: nginx-config 
+      #     mountPath: /etc/nginx/nginx.conf
+      #     subPath: nginx.conf 
+      # volumes:
+      # - name: nginx-config 
+      #   configMap: 
+      #     name: nginx-config
       imagePullSecrets:
         - name: harbor-uat
