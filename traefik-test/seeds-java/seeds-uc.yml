@@ -1,7 +1,6 @@
 apiVersion: v1
 kind: Service
 metadata:
-  # name: service-redis
   name: seeds-uc
   namespace: seeds-uat
 spec:
@@ -36,6 +35,8 @@ spec:
       - name: seeds-uc
         image: harbor.seedslabs.io/seeds-java/seeds-uc:latest
         imagePullPolicy: Always
+        ports:
+          - containerPort: 10101
         env:
         # - name: PROFILE
         #   value: prd
@@ -53,37 +54,6 @@ spec:
           value: http://seeds-config:8888
         - name: LOG_KAFKA_SERVERS
           value: kafka-log.elastic.svc.cluster.local:9092
-        # configure of application.yml 
-        # kafka 
-        - name: KAFKA_BOOTSTRAP_SERVERS 
-          value: kafka.elastic.svc.cluster.local:9092 
-        - name: ZOOKEEPER_ADDRESS
-          value: zookeeper.elastic.svc.cluster.local:2181
-        # redis 
-        - name: REDIS_HOST
-          value: redis-service
-        - name: REDIS_PORT
-          value: "6379"
-        - name: REDIS_PASSWORD
-          value: Seeds123!
-        # minio 
-        - name: OSS_ENDPOINT
-          value: minio-service.minio.svc.cluster.local:9000
-        - name: OSS_ACCESS_KEY
-          value: seeds123!
-        - name: OSS_SECRET_KEY
-          value: seeds123!
-        # service url
-        - name: URL_UC
-          value: http://seeds-uc:10101
-        - name: URL_ADMIN
-          value: http://seeds-admin:10102
-        - name: URL_GAME
-          value: http://seeds-game:10106
-        - name: URL_GATEWAY
-          value: http://seeds-gateway:9999
-        ports:
-          - containerPort: 10101
         # readinessProbe:
         #   tcpSocket:
         #     port: 8888
