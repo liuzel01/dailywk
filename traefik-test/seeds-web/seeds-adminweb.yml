@@ -45,18 +45,18 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 60
           timeoutSeconds: 30
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "250m"
+        resources: {}
+          # limits:
+          #   memory: "128Mi"
+          #   cpu: "250m"
         volumeMounts:
-        - name: nginx-config 
+        - name: nginx-uat-admin 
           mountPath: /etc/nginx/nginx.conf
-          subPath: nginx.conf 
+          subPath: uat-admin.seedslabs.io.conf 
       volumes:
-      - name: nginx-config 
+      - name: nginx-uat-admin 
         configMap: 
-          name: nginx-config
+          name: nginx-uat-admin
       # 使用 harbor 的密文（Rancher 中已添加）
       imagePullSecrets:
         - name: harbor-uat
