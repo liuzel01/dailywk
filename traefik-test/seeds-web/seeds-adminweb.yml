@@ -50,13 +50,13 @@ spec:
           #   memory: "128Mi"
           #   cpu: "250m"
         volumeMounts:
-        - name: nginx-uat-admin 
+        - name: nginx-adminweb 
           mountPath: /etc/nginx/nginx.conf
           subPath: uat-admin.seedslabs.io.conf 
       volumes:
-      - name: nginx-uat-admin 
+      - name: nginx-adminweb 
         configMap: 
-          name: nginx-uat-admin
+          name: nginx-adminweb
       # 使用 harbor 的密文（Rancher 中已添加）
       imagePullSecrets:
         - name: harbor-uat
