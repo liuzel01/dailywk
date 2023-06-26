@@ -59,6 +59,9 @@ spec:
           value: http://seeds-config:8888
         - name: LOG_KAFKA_SERVERS
           value: kafka-log.elastic.svc.cluster.local:9092
+        # 指定日志打印在终端，还是使用kafka（uat_docker）
+        # - name: PROFILE
+        #   value: local
         
         readinessProbe:
           tcpSocket:

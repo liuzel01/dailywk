@@ -38,10 +38,6 @@ spec:
         ports:
           - containerPort: 8888
         env:
-        # - name: PROFILE
-        #   value: prd
-        # - name: BUILD_NUMBER
-        #   value: BN_88
         - name: APP_NAME
           value: seeds-config
         # configure of seeds-config.yml
