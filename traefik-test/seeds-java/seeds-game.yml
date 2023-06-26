@@ -60,12 +60,12 @@ spec:
             port: 10106
           initialDelaySeconds: 60
           periodSeconds: 60
-          timeoutSeconds: 5
+          timeoutSeconds: 15
         livenessProbe:
           tcpSocket:
             port: 10106
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          initialDelaySeconds: 20
+          periodSeconds: 15
           timeoutSeconds: 5
         resources:
           # requests:
