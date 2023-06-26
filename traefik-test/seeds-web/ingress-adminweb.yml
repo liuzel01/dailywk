@@ -19,7 +19,7 @@ spec:
       paths:
       - backend:
           service:
-            name: seeds-adminweb
+            name: seeds-admin-web
             port:
               number: 80
         path: /
