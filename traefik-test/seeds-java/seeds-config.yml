@@ -52,13 +52,13 @@ spec:
             port: 8888
           initialDelaySeconds: 60
           periodSeconds: 60
-          timeoutSeconds: 30
+          timeoutSeconds: 5
         livenessProbe:
           tcpSocket:
             port: 8888
-          initialDelaySeconds: 60
-          periodSeconds: 60
-          timeoutSeconds: 30
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
         resources: {}
           # requests:
           #   memory: "512Mi"

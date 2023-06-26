@@ -46,18 +46,18 @@ spec:
           value: http://seeds-config:8888
         - name: LOG_KAFKA_SERVERS
           value: kafka-log.elastic.svc.cluster.local:9092
-        # readinessProbe:
-        #   tcpSocket:
-        #     port: 9999
-        #   initialDelaySeconds: 60
-        #   periodSeconds: 60
-        #   timeoutSeconds: 30
-        # livenessProbe:
-        #   tcpSocket:
-        #     port: 9999
-        #   initialDelaySeconds: 60
-        #   periodSeconds: 60
-        #   timeoutSeconds: 30
+        readinessProbe:
+          tcpSocket:
+            port: 9999
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 9999
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
         resources: {}
           # requests:
           #   memory: "512Mi"
