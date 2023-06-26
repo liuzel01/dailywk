@@ -17,10 +17,17 @@ spec:
   - host: seeds-adminweb.seedslabs.io
     http:
       paths:
-      - backend:
+      - path: /
+        pathType: Prefix
+        backend:
           service:
             name: seeds-admin-web
             port:
               number: 80
-        path: /
-        pathType: Prefix
+      - path: '/(admin|uc)/(.*)'
+        pathType: ImplementationSpecific
+        backend: 
+          service: 
+            name: seeds-gateway
+            port:
+              number: 9999
