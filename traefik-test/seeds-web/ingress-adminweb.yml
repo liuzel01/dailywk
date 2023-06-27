@@ -24,10 +24,10 @@ spec:
             name: seeds-admin-web
             port:
               number: 80
-      - path: '/(admin|uc)/(.*)'
-        pathType: ImplementationSpecific
-        backend: 
-          service: 
-            name: seeds-gateway
-            port:
-              number: 9999
+      # - path: '/(admin|uc)/(.*)'
+      #   pathType: ImplementationSpecific
+      #   backend: 
+      #     service: 
+      #       name: seeds-gateway
+      #       port:
+      #         number: 9999
