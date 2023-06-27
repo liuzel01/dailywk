@@ -50,7 +50,7 @@ spec:
         volumeMounts:
         - name: nginx-admin-web 
           mountPath: /etc/nginx/nginx.conf
-          subPath: uat-admin.seedslabs.io.conf 
+          subPath: uat-admin.seedslabs.io.conf
       volumes:
       - name: nginx-admin-web 
         configMap: 
