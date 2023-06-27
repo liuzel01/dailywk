@@ -33,29 +33,29 @@ spec:
         image: harbor.seedslabs.io/seeds-web/seeds-web
         ports:
         - containerPort: 8001
-        readinessProbe:
-          tcpSocket:
-            port: 8001
-          initialDelaySeconds: 20
-          periodSeconds: 10
-          timeoutSeconds: 5
-        livenessProbe:
-          tcpSocket:
-            port: 8001
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 5
-        resources:
-          limits:
-            memory: "250Mi"
-            cpu: "250m"
+        # readinessProbe:
+        #   tcpSocket:
+        #     port: 8001
+        #   initialDelaySeconds: 20
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        # livenessProbe:
+        #   tcpSocket:
+        #     port: 8001
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        resources: {}
+          # limits:
+          #   memory: "250Mi"
+          #   cpu: "250m"
       #   volumeMounts:
-      #   - name: nginx-config 
+      #   - name: nginx-web 
       #     mountPath: /etc/nginx/nginx.conf
-      #     subPath: nginx.conf 
+      #     subPath: uat.seedslabs.io.conf 
       # volumes:
-      # - name: nginx-config 
+      # - name: nginx-web 
       #   configMap: 
-      #     name: nginx-config
+      #     name: nginx-web
       imagePullSecrets:
         - name: harbor-uat
