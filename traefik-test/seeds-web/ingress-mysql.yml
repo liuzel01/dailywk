@@ -3,15 +3,9 @@ kind: Ingress
 metadata:
   name: mysql-service-ingress
   namespace: seeds-uat 
-  # annotations:
-  #   kubernetes.io/ingress.class: traefik
-  #   # nginx.ingress.kubernetes.io/ssl-redirect: "false"
-  #   cert-manager.io/issuer: letsencrypt-prod
+  annotations:
+    kubernetes.io/ingress.class: traefik
 spec:
-  # tls: 
-  # - secretName: mysql-service-ssl
-  #   hosts:
-  #   - mysql-service.seedslabs.io
   rules:
   - host: mysql-service.seedslabs.io
     http:
