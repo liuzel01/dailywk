@@ -62,5 +62,7 @@ spec:
           # limits:
           #   memory: "512Mi"
           #   cpu: "1000m"
+      nodeSelector:
+        usefulness: seeds-java
       imagePullSecrets:
         - name: harbor-uat
