@@ -17,4 +17,6 @@ spec:
     - http01:
         ingress: 
           name: seeds-adminweb-ingress
-  
+    - http01:
+        ingress: 
+          name: seeds-gateway-ingress
