@@ -1,4 +1,4 @@
-FROM mysql:8.0
+FROM mysql:8.0.28
 
 LABEL liuzelin01 @gmail.com
 ENV TZ=Asia/Shanghai
