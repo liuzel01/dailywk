@@ -9,7 +9,7 @@
 #     app: mysql
 # spec:
 #   accessModes:
-#     - ReadWriteOnce
+#     - ReadWriteMany
 #   resources:
 #     requests:
 #       storage: 20Gi
@@ -28,18 +28,18 @@ spec:
       app: mysql
   ports:
   - protocol : TCP
-    # nodePort: 30306
+    nodePort: 30306
     port: 3306
     targetPort: 3306
-
 ---
+
 #有状态服务
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysql-deployment
+  name: mysql
 spec:
-  replicas: 3
+  replicas: 1
   serviceName: mysql
   selector:
     matchLabels:
@@ -52,13 +52,12 @@ spec:
       containers:
       - name: mysql
         image: harbor.seedslabs.io/seeds-db/mysql8:latest 
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: Seeds123! 
-        # args: ["--default-authentication-plugin=mysql_native_password"]
         resources:
           requests:
             cpu: "50m"
@@ -80,22 +79,21 @@ spec:
         #   periodSeconds: 60
         #   timeoutSeconds: 30
         volumeMounts:
-        - name: mysql-store
-          mountPath: /home/storageVolume/mysql  # MySQL容器的数据默认都是存在这个目录
-          subPath: mysqldata                    # 这里通过subPath挂载到子目录，就可以避免出错
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+          subPath: mysqldata
       imagePullSecrets:
         - name: harbor-uat
+      terminationGracePeriodSeconds: 10
   volumeClaimTemplates:
   - metadata: 
-      name: mysql-store
+      name: mysql-storage
     spec: 
       accessModes: ["ReadWriteOnce"]
       storageClassName: "standard-rwo"
       resources: 
         requests:
           storage: 20Gi
-
-      # volumes:
-      # - name: mysql-store
-      #   persistentVolumeClaim:
-      #     claimName: mysql-pv-claim             #存储卷名称使用上一步创建的持久卷名称
+  # podManagementPolicy: OrderedReady
+  # updateStrategy:
+  #   type: RollingUpdate
