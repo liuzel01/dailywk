@@ -5,7 +5,7 @@ metadata:
   namespace: minio
 spec:
   rules:
-  - host: seeds-minio.seedslabs.io 
+  - host: uat-minio.seedslabs.io 
     http:
       paths:
       - path: /
