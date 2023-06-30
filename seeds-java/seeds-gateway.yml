@@ -49,7 +49,7 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 9999
-          initialDelaySeconds: 70
+          initialDelaySeconds: 90
           periodSeconds: 60
           timeoutSeconds: 5
         livenessProbe:
