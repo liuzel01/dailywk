@@ -12,9 +12,9 @@ spec:
   tls: 
   - secretName: seeds-adminweb-ssl
     hosts:
-    - seeds-adminweb.seedslabs.io
+    - uat-admin.seedslabs.io
   rules:
-  - host: seeds-adminweb.seedslabs.io
+  - host: uat-admin.seedslabs.io
     http:
       paths:
       - path: /
