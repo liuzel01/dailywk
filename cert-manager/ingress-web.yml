@@ -17,9 +17,9 @@ spec:
   tls: 
   - secretName: seeds-web-ssl
     hosts:
-    - seeds-web.seedslabs.io
+    - uat.seedslabs.io
   rules:
-  - host: seeds-web.seedslabs.io
+  - host: uat.seedslabs.io
     http:
       paths:
       - backend:
