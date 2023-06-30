@@ -1,4 +1,4 @@
 create database `seeds_admin` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
-create database `seeds_uc` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
 create database `seeds_account` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
+create database `seeds_uc` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
 create database `seeds_wallet` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
