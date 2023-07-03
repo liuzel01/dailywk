@@ -21,6 +21,7 @@ metadata:
   namespace: seeds-uat 
 spec:
   replicas: 1
+  revisionHistoryLimit: 5
   selector:
     matchLabels:
       app: seeds-admin
