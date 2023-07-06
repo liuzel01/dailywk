@@ -1,0 +1,149 @@
+// github 凭证
+// def git_auth = "34b1e85f-6740-4e5c-992f-22515277f631"
+def git_auth = "e143854e-b2d8-4503-b375-f8c9622d9126"
+// 构建版本的名称
+// 使用 github仓库的 comment id 作为 imageTag 
+// 镜像仓库地址
+def harbor_url = "harbor.seedslabs.io/seeds-java"
+def harbor_auth = "74986a96-18ed-4089-bd09-9112ecce119d"
+    node{
+        stage('Clone') {
+            echo "1. 拉取代码"
+            checkout([$class: 'GitSCM', branches: [[name: '*/uat_docker']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: "${git_auth}", url: 'https://github.com/yangkangduke/seeds-java.git']]])
+            // checkout([$class: 'GitSCM', branches: [[name: '*/uat']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: "${git_auth}", url: 'https://github.com/yangkangduke/seeds-java.git']]])
+            sh "git rev-parse --short=7 HEAD > commit_id"
+            env.imageTag = readFile('commit_id').trim()
+            sh "rm commit_id"
+
+            // echo "imageTag: ${imageTag}"
+            // echo "imageTag: ${env.imageTag}"
+        }
+
+        stage('build'){
+            echo "2. 编译构建"
+            sh "mvn clean install -pl ${JOB_NAME} -am -amd -Puat -Dmaven.test.skip=true "
+        }
+
+        stage('build image'){
+            echo "3. 构建本地镜像"
+            env.imageName = "${JOB_NAME}:${imageTag}"
+
+            sh """
+            docker build -t ${harbor_url}/${imageName} ./${JOB_NAME} 
+            """
+            withCredentials([usernamePassword(credentialsId: "${harbor_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+                sh """
+                docker login -u ${username} -p ${password} ${harbor_url}
+                docker push ${harbor_url}/${imageName}
+                """
+                }
+            sh """
+            docker rmi -f ${harbor_url}/${imageName}
+            echo '本地镜像删除成功'
+            """
+        }
+        stage('kubectl apply'){
+            echo "4. 远程部署"
+            // def imageName = "${JOB_NAME}:${imageTag}"
+            // echo "repository: ${harbor_url}\/${imageName}"
+            def userInput = input(
+                id: 'userInput',
+                message: '是否需要升级？',
+                parameters: [
+                    [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "Y\nN",
+                    name: '升级?'
+                    ]
+                ]
+            )
+            // 这里 yaml 文件中的 image: 无法引用上面的变量，只有 ${imageTag} 可以的
+            if (userInput == "Y") {
+                sh '''
+image_url=harbor.seedslabs.io/seeds-java/${JOB_NAME}:${imageTag}
+
+cat > seeds-admin.yml <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: seeds-admin
+  namespace: seeds-uat
+spec:
+  ports:
+    - port: 10102
+      targetPort: 10102
+      protocol: TCP
+  selector:
+    app: seeds-admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seeds-admin
+  namespace: seeds-uat 
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+    app: seeds-admin
+  template:
+    metadata:
+    labels:
+      app: seeds-admin
+      tier: backend
+    spec:
+      containers:
+      - name: seeds-admin
+        image: \${image_url}
+        ports:
+          - containerPort: 10102
+        env:
+        - name: APP_NAME
+          value: seeds-admin
+        - name: CONFIG_SERVERS
+          value: http://seeds-config:8888
+        - name: LOG_KAFKA_SERVERS
+          value: kafka-log.elastic.svc.cluster.local:9092
+        readinessProbe:
+          tcpSocket:
+            port: 10102
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 10102
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources: {}
+      nodeSelector:
+        usefulness: seeds-java
+      imagePullSecrets:
+        - name: harbor-uat
+EOF
+kubectl set image deploy/seeds-admin seeds-admin=${image_url} --record=true -nseeds-uat
+'''
+            }
+        }
+        stage("rollout") {
+            echo "是否需要回滚？"
+            def userInput = input(
+                id: 'userInput',
+                message: '是否需要回滚？',
+                parameters: [
+                    [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "N\nY",
+                    name: '回滚?'
+                    ]
+                ]
+            )
+            if (userInput == "Y") {
+                sh """
+                    kubectl rollout undo deploy seeds-admin -nseeds-uat
+                """
+            }
+        }
+    }
