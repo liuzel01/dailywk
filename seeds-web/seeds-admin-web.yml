@@ -29,7 +29,7 @@ spec:
         app: seeds-admin-web
     spec:
       containers:
-      - name: nginx
+      - name: seeds-admin-web
         image: harbor.seedslabs.io/seeds-web/seeds-admin-web
         # readinessProbe:
         #   tcpSocket:
