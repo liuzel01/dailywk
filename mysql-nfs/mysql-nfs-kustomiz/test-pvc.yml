@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-pvc
+spec:
+  #指定sc名字，如果之前设定nfs-sc-default为默认sc可不用写这行指定
+  storageClassName: nfs-client
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi
