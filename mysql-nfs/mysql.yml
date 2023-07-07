@@ -42,7 +42,7 @@ spec:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: Seeds123! 
+          value: Seeds123!
         resources:
           requests:
             cpu: "50m"
