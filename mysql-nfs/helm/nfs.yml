@@ -1,6 +1,8 @@
 nfs:
+  # nfs 服务器的地址、目录配置
   server: 10.5.0.3
   path: /data/nfs
 
+# 限制 pod 部署的节点
 nodeSelector: 
   usefulness: nfs-provisioner
