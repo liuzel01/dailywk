@@ -14,7 +14,7 @@ spec:
   ports:
   - protocol : TCP
     nodePort: 30307
-    port: 3307
+    port: 3306
     targetPort: 3306
 ---
 
@@ -71,7 +71,7 @@ spec:
         usefulness: nfs-provisioner
       imagePullSecrets:
         - name: harbor-uat
-      terminationGracePeriodSeconds: 10
+      # terminationGracePeriodSeconds: 10
   volumeClaimTemplates:
   - metadata: 
       name: mysql-test-storage
