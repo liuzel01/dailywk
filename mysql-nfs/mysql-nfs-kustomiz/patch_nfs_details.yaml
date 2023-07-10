@@ -13,11 +13,11 @@ spec:
             - name: NFS_SERVER
               value: 10.5.0.3
             - name: NFS_PATH
-              value: /data/nfs
+              value: /data/mysql
       nodeSelector:
         usefulness: nfs-provisioner
       volumes:
         - name: nfs-client-root
           nfs:
             server: 10.5.0.3
-            path: /data/nfs
+            path: /data/mysql
