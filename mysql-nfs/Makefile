@@ -19,6 +19,12 @@ apply-kustomiz:
 delete-kustomiz:
 	kubectl delete -k ./mysql-nfs-kustomiz/
 
+test-pvc: 
+	kubectl apply -f ./mysql-nfs-kustomiz/test-pvc.yml 
+
+test-pod: 
+	kubectl apply -f ./mysql-nfs-kustomiz/test-pod.yml 
+
 apply-mysql:
 	kubectl apply -f mysql.yml -nseeds-uat 
 
