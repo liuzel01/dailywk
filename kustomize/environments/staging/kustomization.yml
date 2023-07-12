@@ -1,4 +1,5 @@
 ---
-namespace: staging
+namespace: default
+# namespace: staging
 resources:
 - ../../base
