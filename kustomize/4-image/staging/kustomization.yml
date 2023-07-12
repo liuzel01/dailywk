@@ -1,0 +1,7 @@
+---
+resources:
+- ../base
+images:
+- name: nginx
+  # 重新指定 image 的tag 版本
+  newTag: 1.21.6
