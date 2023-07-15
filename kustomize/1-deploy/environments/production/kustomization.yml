@@ -8,4 +8,5 @@ resources:
 - ../../base
 - namespace.yml
 patchesStrategicMerge:
+# 将部署内容，使用同级目录的 deployment.yml overlay 掉
 - deployment.yml
