@@ -49,13 +49,7 @@ spec:
           # limits:
           #   memory: "250Mi"
           #   cpu: "250m"
-      #   volumeMounts:
-      #   - name: nginx-web 
-      #     mountPath: /etc/nginx/nginx.conf
-      #     subPath: uat.seedslabs.io.conf 
-      # volumes:
-      # - name: nginx-web 
-      #   configMap: 
-      #     name: nginx-web
+      nodeSelector:
+        usefulness: seeds
       imagePullSecrets:
         - name: harbor-uat

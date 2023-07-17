@@ -68,6 +68,8 @@ spec:
         - name: config
           mountPath:  /usr/local/redis/redis.conf
           subPath: redis.conf
+      nodeSelector:
+        usefulness: seeds
       imagePullSecrets:
         - name: harbor-uat
       volumes:

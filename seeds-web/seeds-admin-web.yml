@@ -56,5 +56,7 @@ spec:
         configMap: 
           name: nginx-admin-web
       # 使用 harbor 的密文（Rancher 中已添加）
+      nodeSelector:
+        usefulness: seeds
       imagePullSecrets:
         - name: harbor-uat

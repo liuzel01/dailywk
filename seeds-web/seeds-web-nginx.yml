@@ -57,3 +57,5 @@ spec:
       - name: nginx-web
         configMap: 
           name: nginx-web
+      nodeSelector:
+        usefulness: seeds
