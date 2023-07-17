@@ -1,23 +1,23 @@
 build: 
-	kustomize build environments/production
+	kustomize build overlays/production
 
 apply:
-	kubectl apply -k ./environments/production/
+	kubectl apply -k ./overlays/production/
 
 delete:
-	kubectl delete -k ./environments/production/
+	kubectl delete -k ./overlays/production/
 
 get:
 	kubectl get po -owide -nproduction
 
 build-stg: 
-	kustomize build environments/staging
+	kustomize build overlays/staging
 
 apply-stg: 
-	kubectl apply -k ./environments/staging/
+	kubectl apply -k ./overlays/staging/
 
 delete-stg: 
-	kubectl delete -k ./environments/staging/
+	kubectl delete -k ./overlays/staging/
 
 get-stg: 
 	kubectl get po -owide -ndefault
