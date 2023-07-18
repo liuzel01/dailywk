@@ -1,0 +1,19 @@
+---
+# test for namespace,prefix,suffix,labels,annotations
+namespace: seeds-uat
+namePrefix: l01-
+nameSuffix: -end
+commonAnnotations:
+  app: nginx-l01-annotation
+
+resources:
+- ../../base
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+patches:
+- path: deployment.yml
+labels:
+- includeSelectors: true
+  pairs:
+    app: nginx-l01-label
