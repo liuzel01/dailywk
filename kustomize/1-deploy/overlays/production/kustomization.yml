@@ -1,4 +1,3 @@
----
 # Kustomize Feature List
 # https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/#kustomize-feature-list
 
@@ -7,6 +6,8 @@ namespace: production
 resources:
 - ../../base
 - namespace.yml
-patchesStrategicMerge:
 # 将部署内容，使用同级目录的 deployment.yml overlay 掉
-- deployment.yml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+patches:
+- path: deployment.yml

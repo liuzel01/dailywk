@@ -1,8 +1,11 @@
----
+replicas:
+- count: 3
+  name: nginx-deployment
 resources:
 - ../base
 images:
 - name: nginx
-  newName: nginx-l01
-  # 重新指定 image 的tag 版本
-  newTag: 1.21.6
+  # newName: memcached
+  newTag: latest
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

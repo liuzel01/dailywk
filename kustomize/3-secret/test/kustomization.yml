@@ -1,0 +1,20 @@
+---
+namespace: production
+# 这里要指定 ns，否则会将 secret 创建在 ns=default
+resources:
+- ../base
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+- literals:
+  - username=admin
+  name: username
+- files:
+  - region=region.txt
+  name: region
+  # options:
+  #   disableNameSuffixHash: true
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
