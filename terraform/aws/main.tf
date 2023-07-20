@@ -1,21 +1,26 @@
 provider "aws" {
-  region = "ap-east-1"
-
+  region     = "ap-east-1"
+  access_key = var.access_secret_key[0]
+  secret_key = var.access_secret_key[1]
 }
 
-# variable "vpc_cidr_block" {
-#   description = "vpc cidr block"
-# }
+variable "vpc_cidr_block" {
+  description = "vpc cidr block"
+}
 
-# variable "subnet_cidr_block" {
-#   description = "subnet cidr block"
-#   default = "10.0.10.0/24"
-# }
+variable "subnet_cidr_block" {
+  description = "subnet cidr block"
+  default     = "10.0.10.0/24"
+}
 
-variable "cidr_block" {
-  description = "cidr blocks for vpc and subnets"
+variable "access_secret_key" {
+  description = "access key and secret for aws cli"
   type        = list(string)
 }
+# variable "cidr_block" {
+#   description = "cidr blocks for vpc and subnets"
+#   type        = list(string)
+# }
 variable "envrionment" {
   description = "dev envrionment"
 }
