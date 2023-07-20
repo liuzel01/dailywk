@@ -42,3 +42,29 @@
 不同环境的变量文件 dev、staging、prod 可以分开存储，然后 apply 时指定文件即可
 
 `terraform apply -var-file terraform-dev.tfvars`
+
+---
+the example of terraform.tfvars like this:
+
+可以使用本地的环境变量， `aws configure` 进行配置
+
+- 查看当前的 AWS 相关的变量： `env | grep AWS`
+
+```tfvars
+access_secret_key = [ "value of access_key","value of secret_key"]
+
+# vpc_cidr_block    = "10.0.0.0/16"
+# subnet_cidr_block = "10.0.11.0/24"
+
+# cidr_block = ["10.0.0.0/16","10.0.11.0/24"]
+cidr_blocks = [ 
+    {cidr_block = "10.0.0.0/16",name = "vpc-l01"},
+    {cidr_block = "10.0.11.0/24",name = "subnet-l01"}
+]
+
+envrionment = "dev-l01"
+```
+
+# ref
+
+[terraform-AWS Provider docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
