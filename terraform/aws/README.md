@@ -20,7 +20,7 @@
 
 清理所有资源
 
-`terraform destory`
+`terraform destroy`
 
 查看当前资源
 
