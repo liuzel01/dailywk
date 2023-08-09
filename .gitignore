@@ -22,3 +22,4 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+terraform/gcp/l01-project*.json
