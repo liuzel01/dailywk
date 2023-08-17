@@ -1,0 +1,72 @@
+def git_auth = "09bac4bf-f046-4c00-b877-ef9f79aa8d42"
+
+// def tag = "latest"
+def harbor_url = "harbor.seedslabs.io/seeds-web"
+def harbor_auth = "74986a96-18ed-4089-bd09-9112ecce119d"
+    node{
+        stage('1. 拉取代码') {
+            checkout([$class: 'GitSCM', branches: [[name: '*/uat']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: "${git_auth}", url: 'http://192.168.1.19:9090/bladerite/web/seeds-admin-web.git']]])
+            // GIT_COMMIT: The commit hash being checked out.
+            // ref url: http://192.168.1.104:8090/env-vars.html/
+
+            env.imageTag = sh (script: 'git rev-parse --short=7 HEAD ${GIT_COMMIT}', returnStdout: true).trim()
+        }
+
+        stage('2. 构建本地镜像'){
+            env.imageName = "${JOB_NAME}:${imageTag}"
+
+           sh """
+           docker build -t ${harbor_url}/${imageName} .
+           """
+           
+           withCredentials([usernamePassword(credentialsId: "${harbor_auth}", passwordVariable: 'password', usernameVariable: 'username')]) {
+               sh """
+               docker login -u ${username} -p ${password} ${harbor_url}
+               docker push ${harbor_url}/${imageName}
+               """
+           }
+            sh """
+            docker rmi -f ${imageName}
+            docker rmi -f ${harbor_url}/${imageName}
+            echo '本地镜像删除成功'
+            """
+        }
+        
+        stage('3. 远程部署'){
+            def userInput = input(
+                id: 'userInput',
+                message: '是否需要升级？',
+                parameters: [
+                    [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "Y\nN",
+                    name: '升级?'
+                    ]
+                ]
+            )
+            if (userInput == "Y") {
+                sh '''
+                image_url=harbor.seedslabs.io/seeds-web/${JOB_NAME}:${imageTag}
+                kubectl set image deploy/${JOB_NAME} ${JOB_NAME}=${image_url} --record=true -nseeds-uat
+                '''
+            }
+        }
+        stage("4. 是否需要回滚？") {
+            def userInput = input(
+                id: 'userInput',
+                message: '是否需要回滚？',
+                parameters: [
+                    [
+                    $class: 'ChoiceParameterDefinition',
+                    choices: "N\nY",
+                    name: '回滚?'
+                    ]
+                ]
+            )
+            if (userInput == "Y") {
+                sh """
+                kubectl rollout undo deploy ${JOB_NAME} -nseeds-uat
+                """
+            }
+        }
+    }
