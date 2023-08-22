@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  dllng-mqtt:
+    image: emqx/emqx
+    container_name: dllng-mqtt
+    restart: always
+    ports:
+      - "18083:18083"
+      - "1883:1883"
+      - "8084:8084"
+      - "8883:8883"
+      - "8083:8083"
+    healthcheck:
+      test: ["CMD","/opt/emqx/bin/emqx_ctl","status"]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+
+
+# # # 在脚本中写入启动命令
+# #   dllng-ai:

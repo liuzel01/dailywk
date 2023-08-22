@@ -1,0 +1,48 @@
+# 使用说明 V4.2.0
+# 1. 使用docker-compose  宿主机不需要配置host来发现
+# 2. 无需修改源码，根目录  docker-compose up 即可
+# 3. 静静等待服务启动
+
+version: '3.7'
+services:
+
+  tracker:
+    image: season/fastdfs:1.2
+    container_name: dllng-fdfs-tracker
+    network_mode: "host"
+    restart: always
+    volumes:
+      - "/home/tracker_data:/fastdfs/tracker/data"
+    ports:
+      - "22122:22122"
+    command: "tracker"
+
+  storage: 
+    image: season/fastdfs:1.2
+    container_name: dllng-fdfs-storage
+    network_mode: "host"
+    restart: always
+    volumes:
+      - "./fdfs/storage.conf:/fdfs_conf/storage.conf"
+      - "/home/storage_data:/fastdfs/storage/data"
+      - "/home/store_path:/fastdfs/store_path"
+    environment:
+      TRACKER_SERVER: "172.16.2.120:22122"
+    command: "storage"
+    depends_on:
+      - tracker
+
+
+  dllng-fdfs-nginx: 
+    image: season/fastdfs:1.2
+    container_name: dllng-fdfs-nginx
+    network_mode: "host"
+    restart: always
+    volumes:
+      - "./nginx.conf:/etc/nginx/conf/nginx.conf"
+      - "/home/store_path:/fastdfs/store_path"
+#     ports:
+#       - "3000:3000"
+    environment:
+      TRACKER_SERVER: "172.16.2.120:22122"
+    command: "nginx"

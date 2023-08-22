@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  dllng-livenvr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    container_name: dllng-livenvr
+    image: dllng-livenvr
+    network_mode: "host"
+    ports:
+      - "10800:10800"
+# 健康检查
+    healthcheck:
+      test: ["CMD","curl -sS 127.0.0.1:10800 || exit 1 "]
+      interval: 5s
+      timeout: 5s
+      retries: 5

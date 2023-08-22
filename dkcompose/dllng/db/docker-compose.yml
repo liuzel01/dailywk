@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  dllng-mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: "Hlxx@0613385"
+      DB_USER: "root"
+      DB_NAMES: "lng_prod"
+    restart: always
+    container_name: dllng-mysql
+    network_mode: "host"
+    image: mysql-dllng:8
+    user: "0"
+    ports:
+      - 3306:3306
+    volumes:
+      - /home/dllng-mysql:/var/lib/mysql

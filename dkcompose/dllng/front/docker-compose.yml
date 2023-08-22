@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+
+  dllng-nginx: 
+    image: nginx:1.23.0-alpine
+    container_name: dllng-nginx
+    network_mode: "host"
+    restart: always
+    volumes:
+      - "./lng-board:/usr/local/nginx/html/lng-board"
+      - "./lng-vue:/usr/local/nginx/html/lng"
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "9700:9700"
+      - "9702:9702"
