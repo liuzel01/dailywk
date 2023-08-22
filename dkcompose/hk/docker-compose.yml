@@ -1,0 +1,65 @@
+version: '3.0'
+services:
+  mysql:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: Hlxx0613385
+    image: hk-mysql:8
+    container_name: hk-mysql
+    restart: always
+    network_mode: "host"
+    privileged: true
+    volumes:
+    - /usr/local/mysql/logs:/var/log
+    - /usr/local/mysql/data:/var/lib/mysql
+    - ./mysql/my.cnf:/etc/my.cnf
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+  
+  redis:
+    image: redis
+    container_name: redis7.0
+    restart: always
+    network_mode: "host"
+    privileged: true
+    volumes:
+      - /usr/local/redis/data:/data
+    command:
+      # redis 密码以命令参数方式传入
+      --requirepass "1qaz@WSX"
+  
+  java:
+    build:
+      context: ./java
+      dockerfile: Dockerfile
+    image: hk-java:open-8-jre
+    container_name: hk-java
+    network_mode: "host"
+    restart: always
+    environment:
+      - TZ=Asia/shanghai
+      - LANG=en_US.UTF-8
+    volumes:
+      - /usr/local/java/piping-warning-manage-web-1.0.jar:/root/pip.jar
+    depends_on:
+      - mysql
+      - redis
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always
+    network_mode: "host"
+    privileged: true
+    volumes:
+    - /usr/local/nginx/nginx.conf:/etc/nginx/nginx.conf
+    - /usr/local/nginx/logs:/var/log/nginx
+    - /usr/local/nginx/html:/usr/local/nginx/html 
+    - /usr/local/nginx/conf:/etc/nginx/conf.d  
+    - /opt/upFiles/piping/:/opt/upFiles/piping/
