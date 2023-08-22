@@ -1,0 +1,150 @@
+version: '3.7'
+services:
+
+  redis:
+    container_name: redis
+    image: redis:6.2
+    restart: unless-stopped
+    network_mode: host
+    ports:
+      - 6379:6379
+    environment:
+      - TZ=Asia/Shanghai
+
+  mysql:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: mysql
+    network_mode: "host"
+    image: mysql8
+    user: "0"
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: "Hlxx@123prod"
+      DB_USER: "root"
+      DB_NAMES: "robot_v2.0"
+    ports:
+      - 3306:3306
+    volumes:
+      - /data/mysql:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/my.cnf
+      # - /root/l01/mysql:/usr/local/mariadb
+
+  livenvr:
+    build:
+      context: ./livenvr
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: livenvr
+    image: livenvr
+    network_mode: host
+    ports:
+      - 10800:10800
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+  fdfs-tracker:
+    image: season/fastdfs:1.2
+    container_name: fdfs-tracker
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - "/data/tracker_data:/fastdfs/tracker/data"
+    ports:
+      - "22122:22122"
+    command: "tracker"
+
+  fdfs-storage: 
+    image: season/fastdfs:1.2
+    container_name: fdfs-storage
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - "./fdfs/storage.conf:/fdfs_conf/storage.conf"
+      - "/data/storage_data:/fastdfs/storage/data"
+      - "/data/store_path:/fastdfs/store_path"
+      - "./fdfs/fdfs_storaged.pid:/fastdfs/storage/data/fdfs_storaged.pid"
+    environment:
+      TRACKER_SERVER: "127.0.0.1:22122"
+    command: "storage"
+    depends_on:
+      - fdfs-tracker
+
+  fdfs-nginx:
+    image: season/fastdfs:1.2
+    container_name: fdfs-nginx
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - "./fdfs/nginx.conf:/etc/nginx/conf/nginx.conf"
+      - "/data/store_path:/fastdfs/store_path"
+    environment:
+      TRACKER_SERVER: "127.0.0.1:22122"
+    command: "nginx"
+
+  mq:
+    image: emqx:4.3
+    container_name: mq
+    user: root
+    restart: unless-stopped
+    volumes:
+      # 这两个目录下的文件在启动后不会变动，因此宿主机的挂载目录下面必须要有内容
+      # - /data/emqx/conf:/opt/emqx/etc
+      # - /data/emqx/lib:/opt/emqx/lib
+      - /data/emqx/data:/opt/emqx/data
+      - /data/emqx/log:/opt/emqx/log
+    # entrypoint: |
+    #   /bin/bash -c "chown -R 1000:1000 /opt/emqx && emqx foreground"
+    environment:
+      # 使用环境变量（从官方配置文件中获取），无需额外挂载配置文件
+      session_expiry_interval: "2h"
+    ports:
+      - 8083:8083
+      - 1883:1883
+      - 18083:18083
+
+  # server:
+  #   image: ibm-semeru-runtimes:open-8-jre
+  #   container_name: server
+  #   network_mode: host
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./server/hl-inspection.war:/root/hl-inspection.war
+  #     - ./server/startup.sh:/root/startup.sh
+  #     - /etc/localtime:/etc/localtime:ro
+  #   ports:
+  #     - 8080:8080
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "5g"
+  #       max-file: "3"
+  #   command: 
+  #     /bin/bash -c /root/startup.sh
+  #   depends_on:
+  #     - fdfs-tracker
+  #     - fdfs-storage
+  #     - fdfs-nginx
+  #     - livenvr
+  #     - mysql
+  #     - redis
+  #     - mq
+
+  # nginx: 
+  #   image: nginx:1.23.0-alpine
+  #   container_name: nginx
+  #   network_mode: "host"
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./web/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./web/server_conf:/etc/nginx/conf.d
+  #     - ./web/hl-inspection:/usr/local/nginx/html/hl-inspection
+  #     - ./web/pad:/usr/local/nginx/html/pad
+  #     - /data/upFiles:/home/upFiles
+  #     - /etc/localtime:/etc/localtime:ro
+  #   depends_on:
+  #     - server
