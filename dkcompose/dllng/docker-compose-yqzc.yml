@@ -1,0 +1,158 @@
+version: '3.7'
+services:
+
+  yqzhaf-redis:
+    container_name: yqzhaf-redis
+    image: redis:7
+    restart: unless-stopped
+    network_mode: host
+    ports:
+      - 6379:6379
+    # 添加 redis 持久化
+    volumes:
+      - /data/yqzhaf/redis:/data
+    environment:
+      - TZ=Asia/Shanghai
+
+  yqzhaf-mysql:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: yqzhaf-mysql
+    network_mode: "host"
+    image: mysql:8
+    user: "0"
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: "yqzaf@2021"
+      DB_USER: "root"
+      DB_NAMES: "yqzhaf"
+    ports:
+      - 3306:3306
+    volumes:
+      - /data/yqzhaf/mysql:/var/lib/mysql
+    healthcheck:
+      test: "mysql -uroot -p$$MYSQL_ROOT_PASSWORD  -e 'SELECT * FROM sys_role' yqzhaf"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  yqzhaf-livenvr:
+    build:
+      context: ./livenvr
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: yqzhaf-livenvr
+    image: livenvr
+    network_mode: host
+    ports:
+      - 10800:10800
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      # 将本地时区文件挂载
+      - /etc/localtime:/etc/localtime:ro
+    # 健康检查
+    healthcheck:
+      test: "curl -sS 127.0.0.1:10800 || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  yqzhaf-fdfs-tracker:
+    image: season/fastdfs:1.2
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - "/data/yqzhaf/tracker_data:/fastdfs/tracker/data"
+    ports:
+      - "22122:22122"
+    command: "tracker"
+
+  yqzhaf-fdfs-storage: 
+    image: season/fastdfs:1.2
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - "./fdfs/storage.conf:/fdfs_conf/storage.conf"
+      - "/data/yqzhaf/storage_data:/fastdfs/storage/data"
+      - "/data/yqzhaf/store_path:/fastdfs/store_path"
+      - "./fdfs/fdfs_storaged.pid:/fastdfs/storage/data/fdfs_storaged.pid"
+    environment:
+      TRACKER_SERVER: "127.0.0.1:22122"
+    command: "storage"
+    depends_on:
+      - yqzhaf-fdfs-tracker
+
+  yqzhaf-fdfs-nginx:
+    image: season/fastdfs:1.2
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - "./fdfs/nginx.conf:/etc/nginx/conf/nginx.conf"
+      - "/data/yqzhaf/store_path:/fastdfs/store_path"
+    environment:
+      TRACKER_SERVER: "127.0.0.1:22122"
+    command: "nginx"
+
+  yqzhaf-mq:
+    image: rabbitmq:3-management
+    restart: always
+    volumes:
+      - /data/yqzhaf/mq_data:/var/lib/rabbitmq
+    environment:
+      - "RABBITMQ_HIPE_COMPILE=1"
+      - "RABBITMQ_DEFAULT_USER=admin"
+      - "RABBITMQ_DEFAULT_PASS=admin"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  yqzhaf-server:
+    image: ibm-semeru-runtimes:open-8-jre
+    container_name: yqzhaf-server
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./server/hklinuxlib:/usr/local/hklinuxlib
+      - ./server/yqzhaf.war:/root/yqzhaf.war
+      - ./server/startup.sh:/root/startup.sh
+      # - /data/upFiles:/root/upFiles
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8070:8070
+    logging:
+      driver: json-file
+      options:
+        max-size: "5g"
+        max-file: "3"
+    command: /bin/bash /root/startup.sh
+    depends_on:
+      - yqzhaf-fdfs-tracker
+      - yqzhaf-fdfs-storage
+      - yqzhaf-fdfs-nginx
+      - yqzhaf-livenvr
+      - yqzhaf-mysql
+      - yqzhaf-redis
+    healthcheck:
+      test: "curl -sS 127.0.0.1:8070 || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  yqzhaf-nginx: 
+    image: nginx:1.23.0-alpine
+    container_name: yqzhaf-nginx
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - ./web/yqzhaf-board:/usr/local/nginx/html/yqzhaf-board
+      - ./web/yqzhaf:/usr/local/nginx/html/yqzhaf
+      - ./web/nginx.conf:/etc/nginx/nginx.conf
+      - ./web/server_conf:/etc/nginx/conf.d
+      - /data/yqzhaf/upFiles/yqzx:/home/upFiles/yqzx
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 10101:10101
+      - 10100:10100
